@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Enumerator Error Log - Alliance of Excellence</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Lora:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="assets/logo.png">
+
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbarInner">
+      <div class="brandSection">
+        <div class="logoContainer">
+           <img 
+            src="assets/logo.png" 
+            alt="Alliance of Excellence logo" 
+            class="logoImage"
+          />
+        </div>
+        <div class="brandText">
+          <h1>Alliance of Excellence</h1>
+          <p class="subtitle">Enumerator Error Log & Quality Assurance Dashboard</p>
+        </div>
+      </div>
+      <div class="badge">KP-RAP</div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card welcomeCard">
+      <div class="cardAccent"></div>
+      <div class="searchRow">
+        <div class="field">
+          <label for="searchInput">
+            <svg class="labelIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+            Search Enumerator
+          </label>
+          <div class="inputWrapper">
+            <svg class="inputIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/>
+              <path d="m21 21-4.35-4.35"/>
+            </svg>
+            <input id="searchInput" type="text" placeholder="Enter Enumerator ID or Name" autocomplete="off" />
+          </div>
+          <div id="results" class="results"></div>
+          <p class="hint">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 16v-4M12 8h.01"/>
+            </svg>
+            Begin typing to search by name or ID number
+          </p>
+        </div>
+
+        <div class="field compact">
+          <label>System Status</label>
+          <div id="statusPill" class="pill neutral">
+            <span class="statusDot"></span>
+            Initializing
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="enumCard" class="card detailsCard hidden">
+      <div class="cardAccent"></div>
+    </section>
+
+    <section id="errorsSection" class="card errorsCard hidden">
+      <div class="cardAccent"></div>
+      <div class="sectionHeader">
+        <div>
+          <h2>
+            <svg class="sectionIcon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+              <line x1="12" y1="9" x2="12" y2="13"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+            Error Analysis
+          </h2>
+          <p class="subtitleSmall" id="countLine"></p>
+        </div>
+
+        <div class="controls">
+          <div class="control">
+            <label for="surveyFilter">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+              </svg>
+              Survey Type
+            </label>
+            <select id="surveyFilter">
+              <option value="">All Surveys</option>
+            </select>
+          </div>
+
+          <div class="control">
+            <label for="severityFilter">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+              Severity Level
+            </label>
+            <select id="severityFilter">
+              <option value="">All Severities</option>
+            </select>
+          </div>
+
+          <button id="downloadBtn" class="btn" type="button" disabled>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            Download Report
+          </button>
+        </div>
+      </div>
+
+      <div id="statsBar" class="statsGrid"></div>
+
+      <div class="grid2">
+        <div class="panel">
+          <div class="panelHeader">
+            <div class="panelHeaderIcon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="20" x2="18" y2="10"/>
+                <line x1="12" y1="20" x2="12" y2="4"/>
+                <line x1="6" y1="20" x2="6" y2="14"/>
+              </svg>
+            </div>
+            <div>
+              <h3>Top 3 Frequent Errors</h3>
+              <p class="subtitleSmall">Based on current filter selection</p>
+            </div>
+          </div>
+          <div id="topErrors" class="topList"></div>
+        </div>
+
+        <div class="panel improvementPanel">
+          <div class="panelHeader">
+            <div class="panelHeaderIcon improvement">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+            </div>
+            <div>
+              <h3>Quality Improvement Guide</h3>
+              <p class="subtitleSmall">Best practices for error reduction</p>
+            </div>
+          </div>
+          <ul class="tips">
+            <li><strong>Priority Focus:</strong> Address recurring errors first, they usually have the biggest impact on overall data quality.</li>
+            <li><strong>Careful review before submissions:</strong> Take a moment to review key responses for completeness and consistency before finalizing the survey.</li>
+            <li><strong>Expert Support:</strong> When rules are unclear or complex, consult your Qcs & supervisor to confirm the correct approach.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tableWrap">
+        <div class="tableHeader">
+          <h3>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7"/>
+              <rect x="14" y="3" width="7" height="7"/>
+              <rect x="14" y="14" width="7" height="7"/>
+              <rect x="3" y="14" width="7" height="7"/>
+            </svg>
+            Detailed Error Log
+          </h3>
+        </div>
+        <table id="errorsTable">
+          <thead>
+            <tr>
+              <th>Record Key</th>
+              <th>Submission Date</th>
+              <th>Survey</th>
+              <th>Severity</th>
+              <th>Error ID</th>
+              <th>Title</th>
+              <th>Message</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+
+        <div id="emptyState" class="empty hidden">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 6v6l4 2"/>
+          </svg>
+          <p>No records found for the selected filters.</p>
+          <p class="emptyHint">Try adjusting your filter criteria or select a different enumerator.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="footerContent">
+      <div class="footerBrand">
+        <img 
+          src="assets/logo.png" 
+          alt="Alliance of Excellence" 
+          class="footerLogoImg"
+        />
+        <span>Alliance of Excellence</span>
+      </div>
+          <div class="footerInfo">
+          <span>KP-RAP Quality Assurance System</span>
+          <span class="separator">•</span>
+          <!-- <span>Data refreshed from Google Sheets</span> -->
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
