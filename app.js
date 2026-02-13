@@ -45,12 +45,9 @@ async function init(){
       return;
     }
 
-    // ✅ Normalize Google sheet URL (supports share link and publish link)
     const normalizedUrl = normalizeGoogleSheetUrl(CSV_URL);
-
     const csvText = await fetchText(normalizedUrl);
 
-    // ✅ If Google returned HTML instead of CSV, fail with a helpful message
     if (looksLikeHtml(csvText)){
       throw new Error(
         "Google returned HTML instead of CSV. Please re-check Publish to web OR use a normal sheet link. " +
@@ -127,23 +124,31 @@ function wireEvents(){
     downloadCurrentCSV();
   });
 
-  // ✅ IMPORTANT: prevent text selection / Google search on mobile
-  // This blocks the selection gesture before it starts
-  ["mousedown", "touchstart"].forEach(evt => {
-    elErrorsTbody.addEventListener(evt, (e) => {
-      const cell = e.target.closest(".copyable");
-      if (!cell) return;
-      e.preventDefault();
-    }, { passive: false });
+  // ✅ IMPORTANT: DO NOT block touchstart (it breaks scrolling)
+  // Block only mouse selection + right-click menus on copyable cells.
+
+  elErrorsTbody.addEventListener("mousedown", (e) => {
+    const cell = e.target.closest(".copyable");
+    if (!cell) return;
+    e.preventDefault(); // stops text selecting when dragging with mouse
+  });
+
+  elErrorsTbody.addEventListener("dragstart", (e) => {
+    const cell = e.target.closest(".copyable");
+    if (!cell) return;
+    e.preventDefault();
+  });
+
+  elErrorsTbody.addEventListener("contextmenu", (e) => {
+    const cell = e.target.closest(".copyable");
+    if (!cell) return;
+    e.preventDefault(); // reduces "Search Google" / context menu
   });
 
   // ✅ Click-to-copy for table cells
   elErrorsTbody.addEventListener("click", (e) => {
     const cell = e.target.closest(".copyable");
     if (!cell) return;
-
-    e.preventDefault();
-    e.stopPropagation();
 
     const val = cell.getAttribute("data-copy") || "";
     if (!val) return;
@@ -215,17 +220,12 @@ function selectEnumerator(key){
     </div>
   `;
 
-  // ✅ Prevent selection + copy for enum card fields too
+  // ✅ Copy in enum card without breaking scroll
   elEnumCard.querySelectorAll(".copyable").forEach(node => {
-    ["mousedown", "touchstart"].forEach(evt => {
-      node.addEventListener(evt, (ev) => {
-        ev.preventDefault();
-      }, { passive: false });
-    });
-
-    node.addEventListener("click", (ev) => {
-      ev.preventDefault();
-      ev.stopPropagation();
+    node.addEventListener("mousedown", (ev) => ev.preventDefault());
+    node.addEventListener("dragstart", (ev) => ev.preventDefault());
+    node.addEventListener("contextmenu", (ev) => ev.preventDefault());
+    node.addEventListener("click", () => {
       const v = node.getAttribute("data-copy") || "";
       if (v) copyToClipboard(v);
     });
@@ -272,7 +272,6 @@ function renderErrorsForSelected(){
   currentRenderedRows = rows;
   elDownloadBtn.disabled = rows.length === 0;
 
-  // Stats
   const totalErrors = rows.length;
   const totalCritical = rows.filter(r => CRITICAL_LABELS.includes(r.severity)).length;
   const totalQualityFlags = rows.filter(r => QUALITY_FLAG_LABELS.includes(r.severity)).length;
@@ -285,10 +284,8 @@ function renderErrorsForSelected(){
   `;
 
   elCountLine.textContent = `${totalErrors} record(s) shown`;
-
   renderTop3(rows);
 
-  // Table order: Key, Submission Date, Survey, Severity, Error ID, Title, Message, Value
   elErrorsTbody.innerHTML = rows.map(r => `
     <tr>
       <td data-label="Record Key" class="copyable" data-copy="${attrEscape(r.recordKey)}">${escapeHtml(r.recordKey)}</td>
