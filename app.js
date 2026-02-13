@@ -420,7 +420,7 @@ function showToast(msg){
   elToast.textContent = msg;
   elToast.classList.add("show");
   if (toastTimer) clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => elToast.classList.remove("show"), 900);
+  toastTimer = setTimeout(() => elToast.classList.remove("show"), 300);
 }
 
 function csvEscape(v){
@@ -571,3 +571,4 @@ function attrEscape(s){
     .replaceAll("'", "&#039;")
     .replaceAll("\n", " ");
 }
+
